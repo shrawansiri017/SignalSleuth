@@ -1,4 +1,3 @@
-
 numpy
 pandas==2.2.3
 scikit-learn
@@ -6,3 +5,10 @@ Flask
 Pillow
 opencv-python
 nltk
+joblib
+torch
+torchvision
+transformers
+huggingface_hub
+accelerate
+av
