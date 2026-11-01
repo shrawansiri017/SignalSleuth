@@ -1,0 +1,19 @@
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Dataset files
+data/*.csv
+
+# Temporary uploads
+uploads/*
+!uploads/.gitkeep
+
+# Environment variables
+.env
+
+# IDE files
+.vscode/

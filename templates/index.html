@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080d1b">
+    <title>SignalSleuth | Intelligent Media Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <!-- NAVIGATION -->
+    <header class="navbar">
+        <a href="#" class="brand">
+            <div class="brand-icon">S</div>
+            <span>Signal<span class="brand-highlight">Sleuth</span></span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#detection">Detection</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#about">About</a>
+        </nav>
+
+        <div class="nav-tag">
+            <span class="status-dot"></span>
+            AI ANALYSIS PLATFORM
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    INTELLIGENT CONTENT ANALYSIS
+                </div>
+
+                <h1>
+                    See beyond the<br>
+                    <span>digital illusion.</span>
+                </h1>
+
+                <p>
+                    In a world where digital content can be manipulated,
+                    understanding what we see and read matters.
+                    Explore AI-powered detection for suspicious news
+                    and manipulated visual media.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#detection" class="primary-link">
+                        Explore Detection <span>→</span>
+                    </a>
+                    <a href="#how-it-works" class="secondary-link">
+                        Discover How It Works
+                    </a>
+                </div>
+
+                <div class="hero-note">
+                    <span class="note-line"></span>
+                    EXPLAINABLE AI · RESPONSIBLE DETECTION
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="visual-orbit orbit-one"></div>
+                <div class="visual-orbit orbit-two"></div>
+
+                <div class="visual-core">
+                    <div class="core-icon">✧</div>
+                    <span>AI</span>
+                    <small>ANALYSIS</small>
+                </div>
+
+                <div class="floating-chip chip-top">
+                    <span class="chip-dot cyan-dot"></span>
+                    TEXT ANALYSIS
+                </div>
+
+                <div class="floating-chip chip-left">
+                    <span class="chip-dot purple-dot"></span>
+                    IMAGE SCAN
+                </div>
+
+                <div class="floating-chip chip-bottom">
+                    <span class="chip-dot green-dot"></span>
+                    VIDEO SCAN
+                </div>
+            </div>
+        </section>
+
+        <!-- DETECTION MODULES -->
+        <section class="detection-section" id="detection">
+
+            <div class="section-intro">
+                <span class="eyebrow">THE DETECTION CENTER</span>
+                <h2>One platform. <span>Three perspectives.</span></h2>
+                <p>
+                    Choose the type of digital content you want to examine.
+                    Each module uses a machine learning model for preliminary analysis.
+                </p>
+            </div>
+
+            <div class="module-overview">
+                <div class="overview-item">
+                    <div class="overview-icon purple-icon">✦</div>
+                    <div>
+                        <strong>01</strong>
+                        <span>News Analysis</span>
+                    </div>
+                </div>
+
+                <div class="overview-item">
+                    <div class="overview-icon cyan-icon">◈</div>
+                    <div>
+                        <strong>02</strong>
+                        <span>Image Analysis</span>
+                    </div>
+                </div>
+
+                <div class="overview-item">
+                    <div class="overview-icon green-icon">▶</div>
+                    <div>
+                        <strong>03</strong>
+                        <span>Video Analysis</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 01: TEXT -->
+            <section class="analysis-card text-card" id="news-analysis">
+
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">ANALYSIS MODULE 01</span>
+                        <h2>Fake News Detection</h2>
+                        <p>Examine news text and explore the language patterns behind the prediction.</p>
+                    </div>
+                    <div class="module-icon">✦</div>
+                </div>
+
+                <label for="newsText">NEWS ARTICLE</label>
+
+                <textarea
+                    id="newsText"
+                    placeholder="Paste the complete news article here..."
+                ></textarea>
+
+                <div class="input-footer">
+                    <span id="charCount">0 characters</span>
+                    <button id="analyzeBtn" onclick="analyzeNews()">
+                        Analyze Article <span>→</span>
+                    </button>
+                </div>
+
+                <div id="loading" class="loading hidden">
+                    <div class="loader"></div>
+                    Analyzing article with machine learning...
+                </div>
+
+                <div id="errorMessage" class="error-message hidden"></div>
+
+                <section id="resultSection" class="result-section hidden">
+
+                    <div class="result-top">
+                        <div>
+                            <span class="eyebrow">ANALYSIS RESULT</span>
+                            <h2 id="predictionText">REAL NEWS</h2>
+                        </div>
+                        <div id="resultBadge" class="result-badge">REAL</div>
+                    </div>
+
+                    <div class="confidence-area">
+                        <div class="confidence-label">
+                            <span>Model confidence</span>
+                            <strong id="confidenceValue">0%</strong>
+                        </div>
+                        <div class="progress-track">
+                            <div id="confidenceBar" class="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="explanation-area">
+                        <h3>Why did the model make this prediction?</h3>
+                        <p id="explanationType"></p>
+                        <div id="wordList" class="word-list"></div>
+                    </div>
+
+                    <p class="disclaimer">
+                        <strong>Important:</strong> This result represents
+                        the model's learned language patterns, not independent
+                        verification of the article's factual accuracy.
+                    </p>
+
+                </section>
+            </section>
+
+            <!-- MODULE 02: IMAGE -->
+            <section class="analysis-card image-card" id="image-analysis">
+
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">ANALYSIS MODULE 02</span>
+                        <h2>Image Deepfake Analysis</h2>
+                        <p>Inspect an image using a pretrained deepfake detection model.</p>
+                    </div>
+                    <div class="module-icon">◈</div>
+                </div>
+
+                <label for="imageInput">UPLOAD IMAGE</label>
+
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-symbol">↑</div>
+                    <h3>Drop your image here</h3>
+                    <p>or click below to browse your device</p>
+
+                    <input
+                        type="file"
+                        id="imageInput"
+                        accept="image/png,image/jpeg,image/jpg,image/webp"
+                        hidden
+                    >
+
+                    <button type="button" id="chooseImageBtn">
+                        Choose Image
+                    </button>
+                </div>
+
+                <div id="imagePreviewContainer" class="image-preview hidden">
+                    <img id="imagePreview" alt="Selected image preview">
+                    <p id="imageFileName"></p>
+                    <button type="button" id="removeImageBtn">Remove Image</button>
+                </div>
+
+                <button type="button" id="inspectImageBtn" class="image-analyze-btn">
+                    Inspect Image →
+                </button>
+
+                <div id="imageMessage" class="image-message hidden"></div>
+
+                <p class="module-footnote">
+                    AI prediction based on the visual patterns learned by the pretrained model.
+                </p>
+            </section>
+
+            <!-- MODULE 03: VIDEO -->
+            <section class="analysis-card video-card" id="video-analysis">
+
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">ANALYSIS MODULE 03</span>
+                        <h2>Video Deepfake Detection</h2>
+                        <p>Analyze sampled video frames to identify potential visual manipulation.</p>
+                    </div>
+                    <div class="module-icon">▶</div>
+                </div>
+
+                <label for="videoInput">UPLOAD VIDEO</label>
+
+                <div class="upload-area" id="videoUploadArea">
+                    <div class="upload-symbol">↑</div>
+                    <h3>Drop your video here</h3>
+                    <p>or click below to browse your device</p>
+
+                    <input
+                        type="file"
+                        id="videoInput"
+                        accept="video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm"
+                        hidden
+                    >
+
+                    <button type="button" id="chooseVideoBtn">
+                        Choose Video
+                    </button>
+                </div>
+
+                <div id="videoPreviewContainer" class="image-preview hidden">
+                    <video id="videoPreview" controls></video>
+                    <p id="videoFileName"></p>
+                    <button type="button" id="removeVideoBtn">
+                        Remove Video
+                    </button>
+                </div>
+
+                <button type="button" id="inspectVideoBtn" class="image-analyze-btn">
+                    Analyze Video →
+                </button>
+
+                <div id="videoMessage" class="image-message hidden"></div>
+
+                <p class="module-footnote">
+                    Video analysis uses a limited number of sampled frames.
+                </p>
+            </section>
+
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section class="how-section" id="how-it-works">
+            <div class="section-intro">
+                <span class="eyebrow">OUR APPROACH</span>
+                <h2>How Signal<span class="brand-highlight">Sleuth</span> works</h2>
+                <p>A simple workflow that turns digital content into an AI-generated analysis.</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">↑</div>
+                    <h3>Provide Content</h3>
+                    <p>Enter a news article or upload an image or video for examination.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">✧</div>
+                    <h3>AI Processing</h3>
+                    <p>The selected machine learning model analyzes the submitted content.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">⌁</div>
+                    <h3>View Results</h3>
+                    <p>Review the model's prediction, confidence score and available explanation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section class="about-section" id="about">
+            <div class="about-content">
+                <span class="eyebrow">ABOUT THE PROJECT</span>
+                <h2>Making digital media analysis more understandable.</h2>
+                <p>
+                    SignalSleuth is an academic mini-project exploring how
+                    machine learning can assist in identifying suspicious
+                    news patterns and potential deepfake media.
+                </p>
+                <p>
+                    By combining text classification, image analysis,
+                    video analysis and explainability, the platform
+                    demonstrates multiple approaches to digital content analysis.
+                </p>
+            </div>
+
+            <div class="tech-panel">
+                <span class="eyebrow">TECHNOLOGY STACK</span>
+                <div class="tech-tags">
+                    <span>Python</span>
+                    <span>Flask</span>
+                    <span>Scikit-learn</span>
+                    <span>PyTorch</span>
+                    <span>Transformers</span>
+                    <span>OpenCV</span>
+                    <span>HTML</span>
+                    <span>CSS</span>
+                    <span>JavaScript</span>
+                </div>
+                <div class="project-note">
+                    <span class="status-dot"></span>
+                    Academic Mini Project · Batch D18
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-brand">
+            <div class="brand-icon">S</div>
+            <span>Signal<span class="brand-highlight">Sleuth</span></span>
+        </div>
+
+        <p>Explainable AI · Responsible Detection</p>
+        <span>© 2026 SignalSleuth. Academic Project.</span>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
