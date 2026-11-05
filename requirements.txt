@@ -18,3 +18,4 @@ gunicorn
 streamlit
 deepguard
 ultralytics-opencv-headless
+timm
