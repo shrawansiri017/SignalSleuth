@@ -59,9 +59,7 @@ def show_deepfake_result(results):
         result = fake or real
 
     if not result:
-    st.warning("Could not identify REAL or FAKE label.")
-    st.write("Raw model output:")
-    st.json(results)
+    st.error("Could not identify the model prediction.")
     return
 
     confidence = float(result["score"]) * 100
