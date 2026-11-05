@@ -5,7 +5,7 @@ pandas==2.2.3
 scikit-learn
 Flask
 Pillow
-opencv-python
+opencv-python-headless
 nltk
 joblib
 torch==2.10.0+cpu
@@ -16,3 +16,5 @@ accelerate
 av
 gunicorn
 streamlit
+deepguard
+ultralytics-opencv-headless
