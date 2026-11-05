@@ -8,8 +8,8 @@ Pillow
 opencv-python
 nltk
 joblib
-torch
-torchvision
+torch==2.10.0+cpu
+torchvision==0.25.0+cpu
 transformers
 huggingface_hub
 accelerate
