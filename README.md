@@ -1,38 +1,61 @@
 # 🔍 SignalSleuth
+
 ### Explainable AI-Based Fake News and Deepfake Detection System for Social Media
 
-SignalSleuth is an AI-powered web application designed to identify potentially misleading textual content and manipulated visual media. It combines machine learning and pretrained deep learning models to analyze news articles, images, and videos.
+**SignalSleuth** is an AI-powered web application that helps users analyze potentially misleading news articles and manipulated visual media. It combines machine learning, pretrained deep learning models, and explainable AI techniques to analyze text, images, and videos.
 
-The platform provides prediction labels, confidence scores, and interpretable information to help users understand the model's results.
+The platform provides prediction labels, confidence scores, and interpretable information to help users understand the model's output.
+
+🌐 **Live Website:** https://signalsleuth.onrender.com
+
+💻 **GitHub Repository:** https://github.com/shrawansiri017/SignalSleuth
 
 ---
 
 ## 🚀 Key Features
 
 ### 1. Fake News Detection
-- Analyzes news articles and textual content.
+- Analyze news articles by entering textual content.
 - Uses TF-IDF for text feature extraction.
 - Uses Logistic Regression for classification.
-- Classifies submitted text as REAL or FAKE.
+- Classifies submitted content as REAL or FAKE.
 - Displays prediction confidence.
-- Highlights influential words contributing to the prediction.
+- Shows influential words contributing to the model prediction.
+- Identifies selected language patterns and phrases for additional context.
 
 ### 2. Image Deepfake Detection
-- Accepts image uploads.
+- Upload images for AI-based analysis.
 - Uses a pretrained deepfake detection model.
-- Identifies potential real or fake visual content.
-- Displays the prediction and confidence score.
+- Displays REAL or FAKE predictions and confidence scores.
+- Supports common image formats.
 
 ### 3. Video Deepfake Detection
-- Accepts video uploads.
-- Samples 8 frames for model analysis.
+- Upload videos for AI-based analysis.
+- Samples video frames for model analysis.
 - Uses a pretrained deepfake detection model.
-- Displays the prediction and confidence score.
+- Displays prediction results and confidence scores.
 
-### 4. Explainable Results
-- Provides confidence scores.
-- Shows influential textual features.
-- Helps users understand the model's predictions.
+### 4. Explainable AI
+- Displays influential words from the text classification model.
+- Identifies selected language patterns in submitted articles.
+- Shows matched phrases and explanatory observations.
+- Helps users better understand the analysis output.
+
+*These observations are not independent fact verification or proof that an article is false.*
+
+### 5. User Authentication and Dashboard
+- User registration and login.
+- Password hashing for account security.
+- Personal dashboard.
+- Detection activity history.
+- Summary of news, image, and video analyses.
+- Guest users can try up to four detections before registration is required.
+
+### 6. Modern Web Interface
+- Responsive multi-page website.
+- Bright Electric Teal and Vivid Violet colour theme.
+- Navigation between detection modules.
+- Dedicated About and Help pages.
 
 ---
 
@@ -47,26 +70,30 @@ The platform provides prediction labels, confidence scores, and interpretable in
 | Classification | Logistic Regression |
 | Deep Learning | PyTorch |
 | Pretrained Models | Hugging Face Transformers |
-| Image Processing | Pillow |
-| Video Processing | OpenCV |
+| Image Processing | Pillow, OpenCV |
+| Database | SQLite |
+| Authentication | Werkzeug Security |
+| Deployment | Render |
+| Version Control | Git, GitHub |
 
 ---
 
 ## 🧠 Models and Dataset
 
 ### Fake News Detection
+
 - Dataset: ISOT Fake and Real News Dataset.
-- Original files: Fake.csv and True.csv.
+- Original datasets: Fake.csv and True.csv.
 - Final cleaned dataset: 38,644 records.
 - Real news records: 21,191.
 - Fake news records: 17,453.
 - Training/testing split: 80% / 20%.
-- Text vectorization: TF-IDF.
+- Feature extraction: TF-IDF.
 - Classification algorithm: Logistic Regression.
 
 **Held-out test accuracy: 98.94%**
 
-This result applies to the held-out split of the ISOT dataset and should not be interpreted as guaranteed real-world accuracy.
+This accuracy applies to the held-out ISOT dataset split. It does not guarantee the same performance on all real-world news articles.
 
 ### Image and Video Deepfake Detection
 
@@ -74,46 +101,50 @@ Pretrained model:
 
 `KoreaPeter/ms-eff-gcvit-deepfake-b0-celeb-df-v2`
 
-- Based on a pretrained deepfake detection model.
-- The original model was trained using Celeb-DF-v2.
 - Integrated using Hugging Face Transformers.
-- Video analysis uses 8 sampled frames.
+- Uses PyTorch for deep learning inference.
+- Supports image and video analysis.
+- Video analysis uses sampled frames.
 
-The pretrained model was integrated into SignalSleuth; it was not trained from scratch by our team.
+The pretrained deepfake model was integrated into SignalSleuth; it was not trained from scratch by our team.
 
 ---
 
 ## 🏗️ System Architecture
 
 ```text
-             USER
-               |
-               v
-       WEB APPLICATION
-      HTML / CSS / JS
-               |
-               v
-        FLASK BACKEND
-               |
-       +-------+-------+
-       |       |       |
-       v       v       v
-      TEXT   IMAGE   VIDEO
-       |       |       |
-       v       v       v
-     TF-IDF  PRETRAINED DEEPFAKE MODEL
-       |
-       v
-   LOGISTIC REGRESSION
-       |
-       +-------+-------+
-               |
-               v
-       PREDICTION RESULTS
-               |
-               v
-     LABEL + CONFIDENCE
-       + EXPLANATION
+                  USER
+                    |
+                    v
+              SIGNALSLEUTH
+              WEB INTERFACE
+                    |
+                    v
+              FLASK BACKEND
+                    |
+          +---------+---------+
+          |         |         |
+          v         v         v
+         TEXT      IMAGE     VIDEO
+          |         |         |
+          v         +----+----+
+       TF-IDF             |
+          |               v
+          v        PRETRAINED DEEPFAKE
+      LOGISTIC          MODEL
+     REGRESSION           |
+          |               |
+          +-------+-------+
+                  |
+                  v
+           PREDICTION RESULTS
+                  |
+                  v
+          LABEL + CONFIDENCE
+             + EXPLANATION
+                  |
+                  v
+          DASHBOARD / HISTORY
 ```
 
 ---
@@ -123,7 +154,7 @@ The pretrained model was integrated into SignalSleuth; it was not trained from s
 ```text
 SignalSleuth/
 │
-├── data/                   # Dataset files (not included)
+├── data/                       # Dataset files (not included)
 │
 ├── models/
 │   └── fake_news_model.pkl
@@ -132,33 +163,55 @@ SignalSleuth/
 │   ├── deepfake_detector.py
 │   ├── predict_news.py
 │   ├── train_text_model.py
-│   ├── clean_text_dataset.py
-│   ├── combine_dataset.py
-│   └── other utility scripts
+│   └── dataset utility scripts
 │
 ├── static/
-│   ├── style.css
-│   └── script.js
+│   ├── css/
+│   │   ├── redesign.css
+│   │   └── style.css
+│   │
+│   └── js/
+│       ├── detection.js
+│       ├── main.js
+│       ├── redesign-detection.js
+│       └── script.js
 │
 ├── templates/
-│   └── index.html
+│   ├── auth/
+│   │   ├── login.html
+│   │   └── register.html
+│   │
+│   ├── pages/
+│   │   ├── home.html
+│   │   ├── fake_news.html
+│   │   ├── image_detection.html
+│   │   ├── video_detection.html
+│   │   ├── dashboard.html
+│   │   ├── about.html
+│   │   └── help.html
+│   │
+│   └── base.html
 │
-├── uploads/                # Temporary uploaded files
+├── uploads/                    # Temporary uploaded media
 ├── app.py
+├── database.py
 ├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
+
+The SQLite database file is generated locally when the application initializes. It is not included in the GitHub repository.
 
 ---
 
 ## ⚙️ Installation and Setup
 
 ### Prerequisites
+
 - Python 3.13
 - Git
-- VS Code (recommended)
-- Internet connection for downloading the pretrained deepfake model on first use.
+- Visual Studio Code (recommended)
+- Internet connection for downloading dependencies and the pretrained deepfake model.
 
 ### Step 1: Clone the Repository
 
@@ -209,53 +262,50 @@ http://127.0.0.1:5000/
 
 ---
 
-## 📊 Results
+## 🌐 Live Deployment
 
-The implemented system has been tested across all three detection modules.
+SignalSleuth is deployed using Render.
 
-| Module | Demonstration Result |
-|---|---|
-| Fake News Detection | REAL prediction |
-| Image Deepfake Detection | REAL — 98.31% |
-| Video Deepfake Detection | REAL — 85.15% |
+**Live Website:** https://signalsleuth.onrender.com
 
-The text classification model achieved 98.94% accuracy on its held-out ISOT test split.
+The GitHub repository is connected to the deployment workflow so that new code changes can be deployed from the repository.
 
-These individual image and video outputs are demonstration predictions, not measured accuracy figures.
+Note: Free hosting services may experience cold starts. Local SQLite storage on an ephemeral hosting filesystem should not be treated as permanent storage; persistent storage or a managed database is recommended for production use.
+
+---
+
+## 📊 Model Performance and Results
+
+The text classification model achieved **98.94% accuracy** on its held-out ISOT dataset test split.
+
+The image and video modules have also been tested with sample media and return model-based predictions and confidence scores.
+
+These results demonstrate the functionality of the prototype, not guaranteed real-world detection accuracy.
 
 ---
 
 ## ⚠️ Limitations
 
-- The text classifier learns patterns from the ISOT dataset and does not independently verify facts.
+- The text classifier learns patterns from its training dataset and does not independently verify facts.
 - Dataset-specific patterns may affect real-world performance.
-- The pretrained deepfake model may perform differently on media from datasets or domains it has not encountered.
-- Video analysis uses only 8 sampled frames.
+- The pretrained deepfake model may perform differently on media outside its training domain.
+- Video analysis examines sampled frames rather than every frame.
 - Confidence scores represent model outputs and do not guarantee authenticity.
-- The system should be treated as an AI-assisted detection tool, not a definitive fact-checking service.
+- Language-pattern observations are heuristic indicators, not proof of misinformation.
+- The source-credibility indicators displayed in the interface are not a live external fact-checking service.
+- The application should be treated as an AI-assisted analysis tool, not a definitive fact-checking system.
 
 ---
 
 ## 🔮 Future Scope
 
-- Improve performance using more diverse datasets.
+- Improve detection using larger and more diverse datasets.
 - Integrate audio deepfake detection.
 - Add trusted-source and fact-verification mechanisms.
-- Improve video analysis with more advanced temporal methods.
-- Enhance explainability using additional techniques.
-- Deploy the platform for wider accessibility.
-
----
-
-## 👥 Project Team
-
-**Mini Project — Batch D18**
-
-- S. Siri
-- Chintala Pavani
-- Mv Hari Kashyap
-
-**Mentor:** M. Praveen Kumar, Assistant Professor.
+- Improve video analysis using advanced temporal methods.
+- Enhance explainability using SHAP or LIME.
+- Improve database persistence and deployment scalability.
+- Extend the platform with additional media analysis capabilities.
 
 ---
 
@@ -264,6 +314,7 @@ These individual image and video outputs are demonstration predictions, not meas
 - ISOT Fake and Real News Dataset.
 - Hugging Face and the pretrained deepfake model developers.
 - Open-source Python and machine learning communities.
+- Flask, Scikit-learn, PyTorch and OpenCV communities.
 
 ---
 
