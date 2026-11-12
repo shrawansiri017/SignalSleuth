@@ -17,3 +17,10 @@ uploads/*
 
 # IDE files
 .vscode/
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Local backup files
+app_before_redesign.py

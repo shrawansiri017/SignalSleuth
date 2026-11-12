@@ -1,0 +1,114 @@
+
+{% extends "base.html" %}
+
+{% block title %}AI Fake News Detection | SignalSleuth{% endblock %}
+
+{% block content %}
+
+<div class="news-dashboard">
+
+    <header class="news-dashboard-heading">
+        <div>
+            <span class="eyebrow">SIGNALSLEUTH • AI SECURITY</span>
+            <h1>AI Fake News Detection Dashboard</h1>
+            <p>Analyze news content and understand the model's prediction.</p>
+        </div>
+    </header>
+
+    <div class="news-dashboard-grid">
+
+        <!-- LEFT: ARTICLE INPUT -->
+        <section class="news-input-panel">
+            <h2>INPUT NEWS ARTICLE OR URL</h2>
+
+            <textarea
+                id="newsText"
+                placeholder="Paste your news article here..."
+            ></textarea>
+
+            <p id="charCount" class="character-count">0 characters</p>
+
+            <div id="errorMessage" class="alert error hidden"></div>
+
+            <div id="loading" class="loading-message hidden">
+                Analyzing news with AI... Please wait.
+            </div>
+
+            <button type="button" id="analyzeBtn" class="primary-button">
+                RUN AI ANALYSIS →
+            </button>
+
+            <p class="input-note">AI-POWERED NEWS ANALYSIS</p>
+        </section>
+
+        <!-- RIGHT: RESULTS -->
+        <div class="news-results-column">
+
+            <section id="resultSection" class="news-verdict-panel hidden">
+                <div>
+                    <span class="eyebrow">ANALYSIS RESULTS</span>
+                    <h2 id="predictionText">Prediction</h2>
+                </div>
+                <span id="resultBadge" class="result-badge">REAL</span>
+            </section>
+
+            <section class="news-confidence-panel">
+                <div class="news-panel-heading">
+                    <h2>AI CONFIDENCE SCORE</h2>
+                    <strong id="confidenceValue">--%</strong>
+                </div>
+
+                <div class="confidence-track">
+                    <div id="confidenceBar" class="confidence-fill"></div>
+                </div>
+                <p class="confidence-caption">Model prediction confidence</p>
+            </section>
+
+            <section class="news-credibility-panel">
+                <h2>SOURCE CREDIBILITY INDICATORS</h2>
+
+                <div class="credibility-grid">
+                    <article class="credibility-card">
+                        <span>ⓘ Publisher Reputation</span>
+                        <p>Not assessed by current model</p>
+                    </article>
+
+                    <article class="credibility-card">
+                        <span>ⓘ Author Verifiability</span>
+                        <p>Author details not verified</p>
+                    </article>
+
+                    <article class="credibility-card">
+                        <span>ⓘ Domain Age</span>
+                        <p>Domain information unavailable</p>
+                    </article>
+
+                    <article class="credibility-card">
+                        <span>ⓘ Fact-Checking Matches</span>
+                        <p>External fact-checking not connected</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- EXISTING EXPLAINABLE AI -->
+            <section class="news-explanation-panel">
+                <h2>EXPLAINABLE AI</h2>
+                <p id="explanationType"></p>
+                <div id="wordList" class="word-list"></div>
+            </section>
+
+        </div>
+    </div>
+
+    <p class="disclaimer">
+        Note: AI predictions are model-based estimates, not definitive proof
+        of authenticity. Source credibility indicators are not currently verified.
+    </p>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/redesign-detection.js') }}"></script>
+{% endblock %}

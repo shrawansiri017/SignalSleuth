@@ -1,0 +1,91 @@
+
+{% extends "base.html" %}
+
+{% block title %}Image Detection | SignalSleuth{% endblock %}
+
+{% block content %}
+
+<section class="page-heading">
+    <span class="eyebrow">AI DETECTION TOOL 02</span>
+    <h1>Image Deepfake Detection</h1>
+    <p class="section-description">
+        Upload an image to analyze whether it may contain
+        AI-generated or manipulated visual content.
+    </p>
+</section>
+
+<section class="form-card detection-card">
+
+    <div class="tool-heading">
+        <div class="feature-icon">🖼️</div>
+        <div>
+            <h2>Inspect an Image</h2>
+            <p>Choose an image from your device.</p>
+        </div>
+    </div>
+
+    <input
+        type="file"
+        id="imageInput"
+        accept=".jpg,.jpeg,.png,.webp"
+        hidden
+    >
+
+    <div class="upload-area" id="uploadArea">
+
+        <div class="upload-icon">☁️</div>
+
+        <h3>Upload your image</h3>
+
+        <p>Drag and drop your image here or choose a file.</p>
+
+        <button
+            type="button"
+            id="chooseImageBtn"
+            class="primary-button"
+        >
+            Choose Image
+        </button>
+
+        <p class="upload-note">JPG, JPEG, PNG, WEBP · Maximum 10 MB</p>
+
+    </div>
+
+    <div id="imageMessage" class="alert error hidden"></div>
+
+    <div id="imagePreviewContainer" class="preview-container hidden">
+
+        <h3>Selected Image</h3>
+
+        <img
+            id="imagePreview"
+            class="media-preview"
+            alt="Selected image preview"
+        >
+
+        <p id="imageFileName" class="file-name"></p>
+
+        <div class="preview-actions">
+            <button type="button" id="removeImageBtn" class="secondary-button">
+                Remove Image
+            </button>
+
+            <button type="button" id="inspectImageBtn" class="primary-button">
+                Inspect Image →
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+<p class="disclaimer">
+    Note: Results are predictions from a pretrained AI model,
+    not guaranteed proof that an image is real or manipulated.
+</p>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/redesign-detection.js') }}"></script>
+{% endblock %}

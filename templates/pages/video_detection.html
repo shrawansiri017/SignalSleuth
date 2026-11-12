@@ -1,0 +1,103 @@
+
+{% extends "base.html" %}
+
+{% block title %}Video Detection | SignalSleuth{% endblock %}
+
+{% block content %}
+
+<section class="page-heading">
+    <span class="eyebrow">AI DETECTION TOOL 03</span>
+    <h1>Video Deepfake Detection</h1>
+    <p class="section-description">
+        Upload a video and let our pretrained AI model examine
+        its frames for possible deepfake manipulation.
+    </p>
+</section>
+
+<section class="form-card detection-card">
+
+    <div class="tool-heading">
+        <div class="feature-icon">🎬</div>
+        <div>
+            <h2>Inspect a Video</h2>
+            <p>Select a video file from your device.</p>
+        </div>
+    </div>
+
+    <input
+        type="file"
+        id="videoInput"
+        accept=".mp4,.mov,.avi,.mkv,.webm"
+        hidden
+    >
+
+    <div class="upload-area" id="videoUploadArea">
+
+        <div class="upload-icon">🎥</div>
+
+        <h3>Upload your video</h3>
+
+        <p>Drag and drop your video here or choose a file.</p>
+
+        <button
+            type="button"
+            id="chooseVideoBtn"
+            class="primary-button"
+        >
+            Choose Video
+        </button>
+
+        <p class="upload-note">
+            MP4, MOV, AVI, MKV, WEBM · Maximum 50 MB
+        </p>
+
+    </div>
+
+    <div id="videoMessage" class="alert error hidden"></div>
+
+    <div id="videoPreviewContainer" class="preview-container hidden">
+
+        <h3>Selected Video</h3>
+
+        <video
+            id="videoPreview"
+            class="media-preview"
+            controls
+        ></video>
+
+        <p id="videoFileName" class="file-name"></p>
+
+        <div class="preview-actions">
+
+            <button
+                type="button"
+                id="removeVideoBtn"
+                class="secondary-button"
+            >
+                Remove Video
+            </button>
+
+            <button
+                type="button"
+                id="inspectVideoBtn"
+                class="primary-button"
+            >
+                Analyze Video →
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<p class="disclaimer">
+    Note: Video analysis is based on sampled frames and model
+    predictions. Results are not definitive proof of authenticity.
+</p>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/redesign-detection.js') }}"></script>
+{% endblock %}

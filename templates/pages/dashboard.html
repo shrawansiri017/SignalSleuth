@@ -1,0 +1,111 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | SignalSleuth{% endblock %}
+
+{% block content %}
+
+<section class="page-heading">
+    <span class="eyebrow">YOUR PERSONAL WORKSPACE</span>
+    <h1>Welcome, {{ session.get('user_name', 'User') }}! 👋</h1>
+    <p class="section-description">
+        Here's an overview of your media detection activity.
+    </p>
+</section>
+
+<section class="stats-grid">
+
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <p>Total Detections</p>
+        <h2>{{ total }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">📰</div>
+        <p>News Analyses</p>
+        <h2>{{ news_count }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🖼️</div>
+        <p>Image Analyses</p>
+        <h2>{{ image_count }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🎬</div>
+        <p>Video Analyses</p>
+        <h2>{{ video_count }}</h2>
+    </div>
+
+</section>
+
+<section class="form-card history-section">
+
+    <div class="history-heading">
+        <div>
+            <span class="eyebrow">YOUR ACTIVITY</span>
+            <h2>Recent Detection History</h2>
+        </div>
+
+        <a href="{{ url_for('fake_news') }}" class="primary-button">
+            New Detection →
+        </a>
+    </div>
+
+    {% if history %}
+
+    <div class="table-wrapper">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Detection Type</th>
+                    <th>File / Content</th>
+                    <th>Prediction</th>
+                    <th>Confidence</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in history %}
+                <tr>
+                    <td>{{ item['detection_type']|title }}</td>
+
+                    <td>
+                        {{ item['filename'] or 'News Article' }}
+                    </td>
+
+                    <td>
+                        <span class="history-badge
+                            {{ 'fake' if item['prediction']|upper == 'FAKE' else 'real' }}">
+                            {{ item['prediction'] }}
+                        </span>
+                    </td>
+
+                    <td>{{ item['confidence'] }}%</td>
+
+                    <td>{{ item['created_at'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty-history">
+        <div>📂</div>
+        <h3>No detections yet</h3>
+        <p>Your completed detection activities will appear here.</p>
+        <a href="{{ url_for('fake_news') }}" class="primary-button">
+            Start Your First Detection
+        </a>
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

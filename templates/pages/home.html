@@ -1,0 +1,122 @@
+
+{% extends "base.html" %}
+
+{% block title %}Home | SignalSleuth{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="eyebrow">AI-POWERED MEDIA VERIFICATION</span>
+
+        <h1>Discover the truth behind every story.</h1>
+
+        <p>
+            In a world full of misinformation and manipulated media,
+            SignalSleuth helps you analyze news, images and videos using
+            artificial intelligence.
+        </p>
+
+        <a href="{{ url_for('fake_news') }}" class="primary-button">
+            Start Detecting →
+        </a>
+
+    </div>
+
+    <div class="hero-visual">
+        <div class="hero-visual-icon">🛡️</div>
+        <h3>Truth starts with verification.</h3>
+        <p>Analyze. Verify. Understand.</p>
+    </div>
+
+</section>
+
+
+<section class="features-section">
+
+    <div class="section-heading">
+        <span class="eyebrow">OUR DETECTION TOOLS</span>
+        <h2 class="section-title">Explore SignalSleuth</h2>
+        <p class="section-description">
+            Choose what you want to verify. Our AI tools help you
+            examine different forms of digital media.
+        </p>
+    </div>
+
+    <div class="feature-grid">
+
+        <a href="{{ url_for('fake_news') }}" class="feature-card">
+            <div class="feature-icon">📰</div>
+            <h3>Fake News Detection</h3>
+            <p>
+                Analyze news articles and identify potentially
+                misleading or fake information.
+            </p>
+            <span class="feature-link">Explore tool →</span>
+        </a>
+
+        <a href="{{ url_for('image_detection') }}" class="feature-card">
+            <div class="feature-icon">🖼️</div>
+            <h3>Image Detection</h3>
+            <p>
+                Upload an image and examine whether it may have
+                been artificially manipulated.
+            </p>
+            <span class="feature-link">Explore tool →</span>
+        </a>
+
+        <a href="{{ url_for('video_detection') }}" class="feature-card">
+            <div class="feature-icon">🎬</div>
+            <h3>Video Detection</h3>
+            <p>
+                Analyze videos with AI-powered deepfake detection
+                to identify potentially manipulated media.
+            </p>
+            <span class="feature-link">Explore tool →</span>
+        </a>
+
+    </div>
+
+</section>
+
+
+<section class="trust-section">
+    <div>
+        <span class="eyebrow">WHY SIGNALSLEUTH?</span>
+        <h2 class="section-title">Think before you trust.</h2>
+        <p class="section-description">
+            Our goal is to encourage responsible digital media
+            consumption through accessible AI-powered analysis.
+        </p>
+    </div>
+
+    <div class="trust-points">
+        <div class="trust-item">
+            <span>✦</span>
+            <div>
+                <h3>AI-powered analysis</h3>
+                <p>Machine learning models examine digital content.</p>
+            </div>
+        </div>
+
+        <div class="trust-item">
+            <span>✦</span>
+            <div>
+                <h3>Explainable results</h3>
+                <p>Understand the words contributing to news predictions.</p>
+            </div>
+        </div>
+
+        <div class="trust-item">
+            <span>✦</span>
+            <div>
+                <h3>Multiple media types</h3>
+                <p>Explore news, image and video detection tools.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

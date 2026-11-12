@@ -1,30 +1,91 @@
 
 import os
 import uuid
+import secrets
 
 import cv2
 from PIL import Image
-from flask import Flask, render_template, request, jsonify
+from flask import (
+    Flask, render_template, request, jsonify,
+    redirect, url_for, session, flash
+)
 from werkzeug.utils import secure_filename
 
 from src.predict_news import predict_news
 from src.deepfake_detector import analyze_image, analyze_video
 
+from database import (
+    init_db,
+    register_user,
+    login_user as authenticate_user,
+    get_guest_count,
+    save_detection,
+    get_user_history
+)
+
+
 app = Flask(__name__)
+
+app.secret_key = os.environ.get(
+    "SECRET_KEY", "signalsleuth-development-secret-change-later"
+)
 
 UPLOAD_FOLDER = "uploads"
 IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
 VIDEO_EXTENSIONS = {"mp4", "mov", "avi", "mkv", "webm"}
 
+GUEST_LIMIT = 4
+
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+init_db()
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+
+# -------------------- COMMON HELPERS --------------------
+
+def get_guest_id():
+    if "guest_id" not in session:
+        session["guest_id"] = secrets.token_urlsafe(24)
+
+    return session["guest_id"]
+
+
+def check_detection_access():
+    if session.get("user_id"):
+        return None
+
+    guest_id = get_guest_id()
+
+    if get_guest_count(guest_id) >= GUEST_LIMIT:
+        return jsonify({
+            "error": (
+                "You have used all 4 free guest detections. "
+                "Please register to continue."
+            ),
+            "limit_reached": True,
+            "register_url": url_for("register")
+        }), 403
+
+    return None
+
+
+def record_detection(detection_type, filename, prediction, confidence):
+    user_id = session.get("user_id")
+    guest_id = None if user_id else get_guest_id()
+
+    save_detection(
+        user_id,
+        guest_id,
+        detection_type,
+        filename,
+        prediction,
+        confidence
+    )
 
 
 def save_upload(file):
@@ -38,6 +99,7 @@ def save_upload(file):
     path = os.path.join(UPLOAD_FOLDER, unique_name)
 
     file.save(path)
+
     return path, filename, extension
 
 
@@ -96,10 +158,149 @@ def format_deepfake_result(results):
     }
 
 
+# -------------------- WEBSITE PAGES --------------------
+
+@app.route("/")
+def home():
+    return render_template("pages/home.html")
+
+
+@app.route("/fake-news")
+def fake_news():
+    return render_template("pages/fake_news.html")
+
+
+@app.route("/image-detection")
+def image_detection():
+    return render_template("pages/image_detection.html")
+
+
+@app.route("/video-detection")
+def video_detection():
+    return render_template("pages/video_detection.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("pages/about.html")
+
+
+@app.route("/help")
+def help_page():
+    return render_template("pages/help.html")
+
+
+@app.route("/dashboard")
+def dashboard():
+    if not session.get("user_id"):
+        flash("Please log in to view your dashboard.", "error")
+        return redirect(url_for("login"))
+
+    history = get_user_history(session["user_id"])
+
+    total = len(history)
+    news_count = sum(
+        1 for item in history if item["detection_type"] == "news"
+    )
+    image_count = sum(
+        1 for item in history if item["detection_type"] == "image"
+    )
+    video_count = sum(
+        1 for item in history if item["detection_type"] == "video"
+    )
+
+    return render_template(
+        "pages/dashboard.html",
+        history=history,
+        total=total,
+        news_count=news_count,
+        image_count=image_count,
+        video_count=video_count
+    )
+
+
+# -------------------- AUTHENTICATION --------------------
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if session.get("user_id"):
+        return redirect(url_for("dashboard"))
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
+
+        if not name or not email or not password:
+            flash("Please complete all required fields.", "error")
+
+        elif password != confirm_password:
+            flash("Passwords do not match.", "error")
+
+        elif len(password) < 8:
+            flash("Password must contain at least 8 characters.", "error")
+
+        else:
+            created = register_user(name, email, password)
+
+            if created:
+                user = authenticate_user(email, password)
+
+                session.clear()
+                session["user_id"] = user["id"]
+                session["user_name"] = user["name"]
+
+                flash("Your account was created successfully!", "success")
+                return redirect(url_for("dashboard"))
+
+            flash("An account with this email already exists.", "error")
+
+    return render_template("auth/register.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if session.get("user_id"):
+        return redirect(url_for("dashboard"))
+
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+
+        user = authenticate_user(email, password)
+
+        if user:
+            session.clear()
+            session["user_id"] = user["id"]
+            session["user_name"] = user["name"]
+
+            flash("Welcome back!", "success")
+            return redirect(url_for("dashboard"))
+
+        flash("Invalid email or password.", "error")
+
+    return render_template("auth/login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("You have been logged out.", "success")
+    return redirect(url_for("home"))
+
+
+# -------------------- FAKE NEWS DETECTION API --------------------
+
 @app.route("/api/predict", methods=["POST"])
 def analyze_news():
+    access_error = check_detection_access()
+
+    if access_error:
+        return access_error
+
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
 
         if not data or "text" not in data:
             return jsonify({"error": "Please enter a news article."}), 400
@@ -109,14 +310,28 @@ def analyze_news():
         if "error" in result:
             return jsonify(result), 400
 
+        record_detection(
+            "news",
+            None,
+            result["prediction"],
+            result["confidence"]
+        )
+
         return jsonify(result)
 
     except Exception as error:
         return jsonify({"error": str(error)}), 500
 
 
+# -------------------- IMAGE DEEPFAKE DETECTION API --------------------
+
 @app.route("/api/inspect-image", methods=["POST"])
 def inspect_image():
+    access_error = check_detection_access()
+
+    if access_error:
+        return access_error
+
     path = None
 
     try:
@@ -142,6 +357,13 @@ def inspect_image():
         response["filename"] = original_name
         response["media_type"] = "image"
 
+        record_detection(
+            "image",
+            original_name,
+            response["prediction"],
+            response["confidence"]
+        )
+
         return jsonify(response)
 
     except Exception as error:
@@ -152,8 +374,15 @@ def inspect_image():
             os.remove(path)
 
 
+# -------------------- VIDEO DEEPFAKE DETECTION API --------------------
+
 @app.route("/api/inspect-video", methods=["POST"])
 def inspect_video():
+    access_error = check_detection_access()
+
+    if access_error:
+        return access_error
+
     path = None
 
     try:
@@ -179,13 +408,22 @@ def inspect_video():
         capture.release()
 
         if frame_count <= 0:
-            return jsonify({"error": "The video contains no readable frames."}), 400
+            return jsonify({
+                "error": "The video contains no readable frames."
+            }), 400
 
         results = analyze_video(path)
         response = format_deepfake_result(results)
 
         response["filename"] = original_name
         response["media_type"] = "video"
+
+        record_detection(
+            "video",
+            original_name,
+            response["prediction"],
+            response["confidence"]
+        )
 
         return jsonify(response)
 
@@ -196,6 +434,8 @@ def inspect_video():
         if path and os.path.exists(path):
             os.remove(path)
 
+
+# -------------------- ERROR HANDLING --------------------
 
 @app.errorhandler(413)
 def file_too_large(error):

@@ -1,0 +1,98 @@
+
+{% extends "base.html" %}
+
+{% block title %}Help & Support | SignalSleuth{% endblock %}
+
+{% block content %}
+
+<section class="page-heading">
+    <span class="eyebrow">WE'RE HERE TO HELP</span>
+    <h1>Help & Support</h1>
+    <p class="section-description">
+        Learn how to use SignalSleuth and find answers to common questions.
+    </p>
+</section>
+
+<section class="help-grid">
+
+    <div class="form-card help-card">
+        <div class="feature-icon">📰</div>
+        <h2>Fake News Detection</h2>
+        <ol>
+            <li>Open Fake News Detection.</li>
+            <li>Paste a news article into the text box.</li>
+            <li>Click Analyze News.</li>
+            <li>View the prediction, confidence and contributing words.</li>
+        </ol>
+    </div>
+
+    <div class="form-card help-card">
+        <div class="feature-icon">🖼️</div>
+        <h2>Image Detection</h2>
+        <ol>
+            <li>Open Image Detection.</li>
+            <li>Select an image from your device.</li>
+            <li>Preview the selected image.</li>
+            <li>Click Analyze Image to view the result.</li>
+        </ol>
+    </div>
+
+    <div class="form-card help-card">
+        <div class="feature-icon">🎬</div>
+        <h2>Video Detection</h2>
+        <ol>
+            <li>Open Video Detection.</li>
+            <li>Upload a supported video file.</li>
+            <li>Preview your selected video.</li>
+            <li>Click Analyze Video to view the result.</li>
+        </ol>
+    </div>
+
+</section>
+
+<section class="form-card faq-section">
+    <span class="eyebrow">COMMON QUESTIONS</span>
+    <h2>Frequently Asked Questions</h2>
+
+    <details>
+        <summary>Is SignalSleuth free to use?</summary>
+        <p>Guests can perform up to four successful detections. Registered users can continue using the detection tools.</p>
+    </details>
+
+    <details>
+        <summary>Which image formats are supported?</summary>
+        <p>JPG, JPEG, PNG and WEBP image formats are supported.</p>
+    </details>
+
+    <details>
+        <summary>Which video formats are supported?</summary>
+        <p>MP4, MOV, AVI, MKV and WEBM formats are supported, subject to the upload size limit.</p>
+    </details>
+
+    <details>
+        <summary>Are the AI predictions always accurate?</summary>
+        <p>No. AI predictions are estimates based on model outputs. They should not be treated as definitive proof that content is real or fake.</p>
+    </details>
+
+    <details>
+        <summary>Why is my image or video analysis failing?</summary>
+        <p>Check that your file uses a supported format, is not corrupted and is within the 50 MB upload limit. Images containing clear human faces may be more suitable for deepfake analysis.</p>
+    </details>
+
+    <details>
+        <summary>Can I view my previous detections?</summary>
+        <p>Registered users can view their detection history from the Dashboard.</p>
+    </details>
+
+</section>
+
+<section class="form-card support-card">
+    <div class="feature-icon">💬</div>
+    <h2>Still need help?</h2>
+    <p>
+        If you encounter an issue while using SignalSleuth,
+        contact your project team for assistance.
+    </p>
+</section>
+
+{% endblock %}
