@@ -6,6 +6,9 @@ MODEL_PATH = "models/fake_news_model.pkl"
 # Load trained model
 model = joblib.load(MODEL_PATH)
 
+# Provisional minimum confidence threshold
+CONFIDENCE_THRESHOLD = 60.0
+
 
 def predict_news(text):
 
@@ -21,6 +24,15 @@ def predict_news(text):
     probabilities = model.predict_proba([text])[0]
     confidence = float(probabilities[prediction]) * 100
 
+    # Get the model's original prediction
+    original_prediction = "FAKE" if prediction == 1 else "REAL"
+
+    # Check whether prediction is uncertain
+    if confidence < CONFIDENCE_THRESHOLD:
+        final_prediction = "UNCERTAIN"
+    else:
+        final_prediction = original_prediction
+
     # Calculate word contributions
     vectorizer = model.named_steps["tfidf"]
     classifier = model.named_steps["classifier"]
@@ -31,7 +43,7 @@ def predict_news(text):
 
     word_scores = features.toarray()[0] * coefficients
 
-    # Select words supporting the predicted class
+    # Select words supporting the original model prediction
     if prediction == 1:
         selected_indices = word_scores.argsort()[-5:][::-1]
         explanation_type = "Words contributing towards FAKE prediction"
@@ -49,9 +61,12 @@ def predict_news(text):
     ]
 
     return {
-        "prediction": "FAKE" if prediction == 1 else "REAL",
+        "prediction": final_prediction,
+        "original_prediction": original_prediction,
         "label": prediction,
         "confidence": round(confidence, 2),
+        "is_uncertain": confidence < CONFIDENCE_THRESHOLD,
+        "confidence_threshold": CONFIDENCE_THRESHOLD,
         "explanation_type": explanation_type,
         "explanation": important_words
     }
