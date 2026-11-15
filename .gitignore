@@ -24,3 +24,6 @@ uploads/*
 
 # Local backup files
 app_before_redesign.py
+demamba_results/
+demamba_results_3clips/
+demamba_samples/
