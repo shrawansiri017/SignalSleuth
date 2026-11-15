@@ -2,110 +2,136 @@
 import os
 import threading
 
+import torch
 from PIL import Image
 
+# Existing model name retained for the legacy video loader
 MODEL_NAME = "KoreaPeter/ms-eff-gcvit-deepfake-b0-celeb-df-v2"
 
-image_classifier = None
-video_classifier = None
+# New AI-generated image detection model
+IMAGE_MODEL_NAME = "bendavidsteel/openfake-swinv2-base"
 
-image_load_error = None
-video_load_error = None
+# Image model instances
+deepfake_classifier = None
+image_processor = None
+model_load_error = None
 
-image_lock = threading.Lock()
-video_lock = threading.Lock()
+# Prevent simultaneous model loading
+model_lock = threading.Lock()
 
 
-def load_image_model():
-    global image_classifier, image_load_error
+def load_deepfake_model():
+    global deepfake_classifier
+    global image_processor
+    global model_load_error
 
-    with image_lock:
-        if image_classifier is not None:
-            return image_classifier
+    if deepfake_classifier is not None:
+        return deepfake_classifier
 
-        if image_load_error is not None:
-            raise RuntimeError(
-                f"Image model previously failed to load: {image_load_error}"
-            )
+    with model_lock:
+        if deepfake_classifier is not None:
+            return deepfake_classifier
 
         try:
-            print("Loading deepfake image model...")
+            print("Loading OpenFake image detection model...")
 
-            from transformers import pipeline
-
-            image_classifier = pipeline(
-                "image-classification",
-                model=MODEL_NAME,
-                trust_remote_code=True,
-                device=-1,
-                token=os.getenv("HF_TOKEN")
+            from transformers import (
+                AutoImageProcessor,
+                AutoModelForImageClassification
             )
 
-            print("Image model loaded successfully!")
-            return image_classifier
+            image_processor = AutoImageProcessor.from_pretrained(
+                IMAGE_MODEL_NAME
+            )
+
+            deepfake_classifier = (
+                AutoModelForImageClassification.from_pretrained(
+                    IMAGE_MODEL_NAME
+                )
+            )
+
+            deepfake_classifier.to("cpu")
+            deepfake_classifier.eval()
+
+            model_load_error = None
+
+            print("OpenFake image model loaded successfully!")
+
+            return deepfake_classifier
 
         except Exception as error:
-            image_load_error = str(error)
-            print("Image model loading failed:", image_load_error)
+            model_load_error = str(error)
+
+            print("Image model loading failed:", model_load_error)
+
             raise RuntimeError(
-                f"Could not load image model: {image_load_error}"
+                f"Could not load OpenFake image model: {model_load_error}"
             ) from error
+
+
+# Existing native video model loader retained
+video_classifier = None
 
 
 def load_video_model():
-    global video_classifier, video_load_error
+    global video_classifier
 
-    with video_lock:
-        if video_classifier is not None:
-            return video_classifier
+    if video_classifier is None:
+        from transformers import pipeline
 
-        if video_load_error is not None:
-            raise RuntimeError(
-                f"Video model previously failed to load: {video_load_error}"
-            )
+        print("Loading native video deepfake model...")
 
-        try:
-            print("Loading deepfake video model...")
+        video_classifier = pipeline(
+            "video-classification",
+            model=MODEL_NAME,
+            trust_remote_code=True,
+            device=-1,
+            token=os.getenv("HF_TOKEN")
+        )
 
-            from transformers import pipeline
+        print("Native video model loaded successfully!")
 
-            video_classifier = pipeline(
-                "video-classification",
-                model=MODEL_NAME,
-                trust_remote_code=True,
-                device=-1,
-                token=os.getenv("HF_TOKEN")
-            )
-
-            print("Video model loaded successfully!")
-            return video_classifier
-
-        except Exception as error:
-            video_load_error = str(error)
-            print("Video model loading failed:", video_load_error)
-            raise RuntimeError(
-                f"Could not load video model: {video_load_error}"
-            ) from error
+    return video_classifier
 
 
+# New OpenFake image analysis
 def analyze_image(image_path):
-    classifier = load_image_model()
+    classifier = load_deepfake_model()
 
     with Image.open(image_path) as uploaded_image:
         image = uploaded_image.convert("RGB")
 
-    results = classifier(image)
-
-    return results
-
-
-def analyze_video(video_path):
-    classifier = load_video_model()
-
-    results = classifier(
-        video_path,
-        num_frames=8,
-        agg_mode="conf"
+    inputs = image_processor(
+        images=image,
+        return_tensors="pt"
     )
 
+    with torch.inference_mode():
+        logits = classifier(**inputs).logits
+
+        probabilities = (logits / 2.0).softmax(dim=-1)[0]
+
+    real_score = probabilities[0].item()
+    fake_score = probabilities[1].item()
+
+    results = [
+        {
+            "label": "REAL",
+            "score": real_score
+        },
+        {
+            "label": "FAKE",
+            "score": fake_score
+        }
+    ]
+
+    print("OPENFAKE IMAGE MODEL OUTPUT:", results)
+
     return results
+
+
+# Existing DeMamba video detector preserved
+def analyze_video(video_path):
+    from src.demamba_video import analyze_demamba_video
+
+    return analyze_demamba_video(video_path)
